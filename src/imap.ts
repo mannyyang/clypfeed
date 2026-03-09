@@ -8,15 +8,18 @@ function getConfig() {
   const port = Number(process.env.IMAP_PORT) || 993;
 
   if (!user || !pass) {
-    throw new Error("EMAIL_USER and EMAIL_PASSWORD must be set in .env");
+    return null;
   }
 
   return { host, port, secure: true, auth: { user, pass } };
 }
 
 export async function fetchRecentEmails(hours: number = 24): Promise<EmailMeta[]> {
+  const config = getConfig();
+  if (!config) return [];
+
   const client = new ImapFlow({
-    ...getConfig(),
+    ...config,
     logger: false,
   });
 
@@ -54,8 +57,11 @@ export async function fetchRecentEmails(hours: number = 24): Promise<EmailMeta[]
 }
 
 export async function getEmailBody(uid: string): Promise<EmailContent> {
+  const config = getConfig();
+  if (!config) throw new Error("Email not configured");
+
   const client = new ImapFlow({
-    ...getConfig(),
+    ...config,
     logger: false,
   });
 

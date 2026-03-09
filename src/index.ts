@@ -1,4 +1,6 @@
 import "dotenv/config";
+// Allow Agent SDK to spawn Claude Code even when run inside a Claude Code session
+delete process.env.CLAUDECODE;
 import cron from "node-cron";
 import { runAgent } from "./agent.js";
 

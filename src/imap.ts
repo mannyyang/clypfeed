@@ -78,6 +78,9 @@ export async function getEmailBody(uid: string): Promise<EmailContent> {
       const source = result.source?.toString() || "";
       const { html, text } = extractParts(source);
 
+      // Mark email as read
+      await client.messageFlagsAdd(uid, ["\\Seen"], { uid: true });
+
       return {
         uid: String(result.uid),
         subject: envelope?.subject || "(no subject)",

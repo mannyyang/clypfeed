@@ -12,7 +12,13 @@
   "engines": {
     "node": ">=22"
   },
-  "keywords": ["ai", "news", "aggregator", "claude", "anthropic"],
+  "keywords": [
+    "ai",
+    "news",
+    "aggregator",
+    "claude",
+    "anthropic"
+  ],
   "author": "mannyyang",
   "license": "ISC",
   "dependencies": {

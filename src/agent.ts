@@ -14,14 +14,17 @@ Instructions:
 1. Use fetch_emails to get emails from the last 24 hours
 2. Scan the subject lines and senders to identify AI/tech newsletters
 3. Use get_email to read the content of relevant newsletters
-4. Extract AI/ML news items, with this priority order:
+4. Use fetch_webpage to check these official sources for recent announcements:
+   - https://www.anthropic.com/news (Anthropic newsroom)
+   - https://www.anthropic.com/engineering (Anthropic engineering blog)
+5. Extract AI/ML news items, with this priority order:
    a. Claude model updates, releases, or capability changes (highest priority)
    b. Anthropic product news (Claude Code, Cowork, Claude.ai, MCP)
    c. Anthropic company news (funding, partnerships, policy)
    d. Direct competitive moves affecting Claude's positioning (OpenAI, Google, etc.)
-5. Deduplicate stories that appear in multiple newsletters
-6. Rank items by priority, keep top 3-5 items max
-7. Use save_digest to save the result as JSON with this exact schema:
+6. Deduplicate stories that appear in multiple newsletters or web sources
+7. Rank items by priority, keep top 3-5 items max
+8. Use save_digest to save the result as JSON with this exact schema:
    {
      "date": "${today}",
      "items": [
@@ -47,6 +50,7 @@ Rules:
       allowedTools: [
         "mcp__gmail-tools__fetch_emails",
         "mcp__gmail-tools__get_email",
+        "mcp__gmail-tools__fetch_webpage",
         "mcp__gmail-tools__save_digest",
       ],
       permissionMode: "bypassPermissions",

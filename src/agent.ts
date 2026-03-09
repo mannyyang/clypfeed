@@ -11,7 +11,8 @@ export async function runAgent() {
       systemPrompt: `You are an AI news aggregator agent. Your job is to process newsletter emails and produce a daily AI news digest.
 
 Instructions:
-1. Use fetch_emails to get emails from the last 24 hours
+1. Use get_published to check previously published stories — skip any story that covers the same event, even if the headline or wording is different
+2. Use fetch_emails to get emails from the last 24 hours
 2. Scan the subject lines and senders to identify AI/tech newsletters
 3. Use get_email to read the content of relevant newsletters
 4. Use fetch_webpage to check these official sources for recent announcements:
@@ -52,6 +53,7 @@ Rules:
         "mcp__gmail-tools__fetch_emails",
         "mcp__gmail-tools__get_email",
         "mcp__gmail-tools__fetch_webpage",
+        "mcp__gmail-tools__get_published",
         "mcp__gmail-tools__save_digest",
       ],
       permissionMode: "bypassPermissions",

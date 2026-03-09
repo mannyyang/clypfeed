@@ -3,6 +3,7 @@ import "dotenv/config";
 delete process.env.CLAUDECODE;
 import cron from "node-cron";
 import { runAgent } from "./agent.js";
+import { buildPages } from "./pages.js";
 
 const args = process.argv.slice(2);
 
@@ -18,15 +19,21 @@ if (args.includes("--schedule")) {
   console.log(`AI News Aggregator scheduled: ${schedule}`);
   console.log("Press Ctrl+C to stop.\n");
 
-  cron.schedule(schedule, () => {
+  cron.schedule(schedule, async () => {
     console.log(`\n--- Digest run: ${new Date().toISOString()} ---`);
-    runAgent().catch((err) => {
+    try {
+      await runAgent();
+      await buildPages();
+    } catch (err) {
       console.error("Agent run failed:", err);
-    });
+    }
   });
 } else {
-  runAgent().catch((err) => {
+  try {
+    await runAgent();
+    await buildPages();
+  } catch (err) {
     console.error("Agent run failed:", err);
     process.exit(1);
-  });
+  }
 }

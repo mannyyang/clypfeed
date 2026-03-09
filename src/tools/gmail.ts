@@ -2,7 +2,7 @@ import { tool, createSdkMcpServer } from "@anthropic-ai/claude-agent-sdk";
 import { z } from "zod";
 import { fetchRecentEmails, getEmailBody } from "../imap.js";
 import { parseEmailHtml } from "../parser.js";
-import { saveDigestTool } from "./storage.js";
+import { saveDigestTool, getPublishedTool } from "./storage.js";
 import { fetchWebpageTool } from "./web.js";
 
 const fetchEmailsTool = tool(
@@ -47,5 +47,5 @@ const getEmailTool = tool(
 
 export const gmailMcpServer = createSdkMcpServer({
   name: "gmail-tools",
-  tools: [fetchEmailsTool, getEmailTool, fetchWebpageTool, saveDigestTool],
+  tools: [fetchEmailsTool, getEmailTool, fetchWebpageTool, getPublishedTool, saveDigestTool],
 });

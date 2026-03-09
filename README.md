@@ -14,7 +14,7 @@ AI-powered news aggregator that ingests newsletters from Gmail, extracts AI/ML n
 ### Prerequisites
 
 - Node.js 22+
-- [Anthropic API key](https://platform.claude.com/)
+- Claude subscription (logged into Claude Code) or [Anthropic API key](https://platform.claude.com/)
 - Gmail account with IMAP enabled
 
 ### Gmail App Password

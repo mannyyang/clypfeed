@@ -17,6 +17,7 @@ Instructions:
 4. Use fetch_webpage to check these official sources for recent announcements:
    - https://www.anthropic.com/news (Anthropic newsroom)
    - https://www.anthropic.com/engineering (Anthropic engineering blog)
+   - https://github.com/anthropics/claude-code/releases (Claude Code changelog)
 5. Extract AI/ML news items, with this priority order:
    a. Claude model updates, releases, or capability changes (highest priority)
    b. Anthropic product news (Claude Code, Cowork, Claude.ai, MCP)

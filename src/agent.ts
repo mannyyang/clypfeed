@@ -12,21 +12,22 @@ export async function runAgent() {
 
 Instructions:
 1. Use get_published to check previously published stories — skip any story that covers the same event, even if the headline or wording is different
-2. Use fetch_emails to get emails from the last 24 hours
-2. Scan the subject lines and senders to identify AI/tech newsletters
-3. Use get_email to read the content of relevant newsletters
-4. Use fetch_webpage to check these official sources for recent announcements:
+2. Use fetch_rss to get recent items from curated AI news RSS feeds
+3. Use fetch_emails to get emails from the last 24 hours
+4. Scan the subject lines and senders to identify AI/tech newsletters
+5. Use get_email to read the content of relevant newsletters
+6. Use fetch_webpage to check these official sources for recent announcements:
    - https://www.anthropic.com/news (Anthropic newsroom)
    - https://www.anthropic.com/engineering (Anthropic engineering blog)
    - https://github.com/anthropics/claude-code/releases (Claude Code changelog)
-5. Extract AI/ML news items, with this priority order:
+7. Extract AI/ML news items, with this priority order:
    a. Claude model updates, releases, or capability changes (highest priority)
    b. Anthropic product news (Claude Code, Cowork, Claude.ai, MCP)
    c. Anthropic company news (funding, partnerships, policy)
    d. Direct competitive moves affecting Claude's positioning (OpenAI, Google, etc.)
-6. Deduplicate stories that appear in multiple newsletters or web sources
-7. Rank items by priority, keep top 3-5 items max
-8. Use save_digest to save the result as JSON with this exact schema:
+8. Deduplicate stories that appear in multiple newsletters, RSS feeds, or web sources
+9. Rank items by priority, keep top 3-5 items max
+10. Use save_digest to save the result as JSON with this exact schema:
    {
      "date": "${today}",
      "items": [
@@ -53,6 +54,7 @@ Rules:
         "mcp__gmail-tools__fetch_emails",
         "mcp__gmail-tools__get_email",
         "mcp__gmail-tools__fetch_webpage",
+        "mcp__gmail-tools__fetch_rss",
         "mcp__gmail-tools__get_published",
         "mcp__gmail-tools__save_digest",
       ],

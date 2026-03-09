@@ -1,6 +1,7 @@
 import { tool } from "@anthropic-ai/claude-agent-sdk";
 import { z } from "zod";
 import { parseEmailHtml } from "../parser.js";
+import { fetchRssFeeds } from "../rss.js";
 
 const fetchWebpageTool = tool(
   "fetch_webpage",
@@ -40,4 +41,34 @@ const fetchWebpageTool = tool(
   { annotations: { readOnly: true, openWorld: true } }
 );
 
-export { fetchWebpageTool };
+const fetchRssTool = tool(
+  "fetch_rss",
+  "Fetch recent items from curated AI news RSS feeds (Anthropic, OpenAI, Google, DeepMind, TechCrunch, Ars Technica, Latent Space, Simon Willison, etc). Returns titles, links, dates, and sources. Use this as a primary news source alongside emails.",
+  { hours: z.number().default(48).describe("How many hours back to include") },
+  async ({ hours }) => {
+    const items = await fetchRssFeeds(hours);
+    if (items.length === 0) {
+      return {
+        content: [
+          { type: "text" as const, text: "No recent RSS items found." },
+        ],
+      };
+    }
+
+    const text = items
+      .map((item) => `[${item.source}] ${item.title}\n  ${item.link}\n  ${item.date}`)
+      .join("\n\n");
+
+    return {
+      content: [
+        {
+          type: "text" as const,
+          text: `Found ${items.length} recent RSS items:\n\n${text}`,
+        },
+      ],
+    };
+  },
+  { annotations: { readOnly: true, openWorld: true } }
+);
+
+export { fetchWebpageTool, fetchRssTool };

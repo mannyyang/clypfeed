@@ -3,7 +3,7 @@ import { gmailMcpServer } from "./tools/gmail.js";
 
 export async function runAgent() {
   const today = new Date().toISOString().split("T")[0];
-  console.log(`\nRunning AI news digest for ${today}...\n`);
+  console.error(`\nRunning AI news digest for ${today}...\n`);
 
   for await (const message of query({
     prompt: `Fetch today's emails and create an AI news digest for ${today}.`,
@@ -71,13 +71,13 @@ Rules:
     if (message.type === "assistant") {
       for (const block of (message as any).message?.content ?? []) {
         if ("text" in block) {
-          console.log(block.text);
+          console.error(block.text);
         } else if ("name" in block) {
-          console.log(`  [tool] ${block.name}`);
+          console.error(`  [tool] ${block.name}`);
         }
       }
     } else if (message.type === "result") {
-      console.log(`\nAgent finished: ${(message as any).subtype}`);
+      console.error(`\nAgent finished: ${(message as any).subtype}`);
     }
   }
 }

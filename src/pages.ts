@@ -1,9 +1,10 @@
 import { readdir, readFile, writeFile, mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import type { Digest, DigestItem } from "./types.js";
+import { getOutputDir, getProjectDir } from "./config.js";
 
-const outputDir = join(process.cwd(), "output");
-const docsDir = join(process.cwd(), "docs");
+const outputDir = getOutputDir();
+const docsDir = join(getProjectDir(), "docs");
 
 const CATEGORY_LABELS: Record<string, string> = {
   "claude-updates": "Claude Updates",
@@ -236,7 +237,7 @@ export async function buildPages(): Promise<void> {
     })
   );
 
-  console.log(
+  console.error(
     `Built pages: ${latest.length} digest on index, ${recentDigests.length} on archive`
   );
 }

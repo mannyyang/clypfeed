@@ -38,7 +38,7 @@ const fetchWebpageTool = tool(
       ],
     };
   },
-  { annotations: { readOnly: true, openWorld: true } }
+  { annotations: { readOnlyHint: true, openWorldHint: true } }
 );
 
 const fetchRssTool = tool(
@@ -68,7 +68,7 @@ const fetchRssTool = tool(
       ],
     };
   },
-  { annotations: { readOnly: true, openWorld: true } }
+  { annotations: { readOnlyHint: true, openWorldHint: true } }
 );
 
 export { fetchWebpageTool, fetchRssTool };

@@ -2,6 +2,7 @@ import { tool } from "@anthropic-ai/claude-agent-sdk";
 import { z } from "zod";
 import { mkdir, writeFile, readFile } from "node:fs/promises";
 import { join } from "node:path";
+import { getOutputDir } from "../config.js";
 
 interface PublishedEntry {
   headline: string;
@@ -10,7 +11,7 @@ interface PublishedEntry {
   source?: string;
 }
 
-const publishedPath = join(process.cwd(), "output", "published.json");
+const publishedPath = join(getOutputDir(), "published.json");
 
 async function loadPublished(): Promise<PublishedEntry[]> {
   try {
@@ -49,7 +50,7 @@ export const getPublishedTool = tool(
       ],
     };
   },
-  { annotations: { readOnly: true } }
+  { annotations: { readOnlyHint: true } }
 );
 
 export const saveDigestTool = tool(
@@ -60,7 +61,7 @@ export const saveDigestTool = tool(
     digest: z.string().describe("JSON string of the digest object with items array and signal"),
   },
   async ({ date, digest }) => {
-    const outputDir = join(process.cwd(), "output");
+    const outputDir = getOutputDir();
     const filePath = join(outputDir, `${date}.json`);
 
     await mkdir(outputDir, { recursive: true });

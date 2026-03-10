@@ -20,7 +20,7 @@ const fetchEmailsTool = tool(
       ],
     };
   },
-  { annotations: { readOnly: true, openWorld: true } }
+  { annotations: { readOnlyHint: true, openWorldHint: true } }
 );
 
 const getEmailTool = tool(
@@ -42,7 +42,7 @@ const getEmailTool = tool(
       ],
     };
   },
-  { annotations: { readOnly: true } }
+  { annotations: { readOnlyHint: true } }
 );
 
 export const gmailMcpServer = createSdkMcpServer({

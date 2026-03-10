@@ -5,8 +5,10 @@ export interface RssItem {
   source: string;
 }
 
+import { loadConfig, type FeedEntry } from "./config.js";
+
 // Curated high-signal AI/engineering feeds (all validated)
-const RSS_FEEDS: { name: string; url: string }[] = [
+export const DEFAULT_FEEDS: FeedEntry[] = [
   // Lab & platform blogs
   { name: "OpenAI Blog", url: "https://openai.com/blog/rss.xml" },
   { name: "Google AI Blog", url: "http://googleaiblog.blogspot.com/atom.xml" },
@@ -69,11 +71,20 @@ function isRecent(dateStr: string, hours: number): boolean {
   }
 }
 
-export async function fetchRssFeeds(hours: number = 48): Promise<RssItem[]> {
+export async function fetchRssFeeds(
+  hours: number = 48,
+  feeds?: FeedEntry[]
+): Promise<RssItem[]> {
+  let feedList = feeds;
+  if (!feedList) {
+    const config = await loadConfig();
+    feedList = config.feeds.length > 0 ? config.feeds : DEFAULT_FEEDS;
+  }
+
   const allItems: RssItem[] = [];
 
   const results = await Promise.allSettled(
-    RSS_FEEDS.map(async (feed) => {
+    feedList.map(async (feed) => {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 10000);
 

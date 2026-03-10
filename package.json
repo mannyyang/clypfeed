@@ -1,13 +1,12 @@
 {
   "name": "clypfeed",
   "version": "1.0.0",
-  "description": "AI news aggregator using Claude Agent SDK — ingests Gmail newsletters, summarizes with Claude, outputs daily digests",
+  "description": "AI news aggregator Claude Code plugin — ingests Gmail newsletters & RSS, summarizes with Claude, outputs daily digests",
   "type": "module",
-  "main": "src/index.ts",
+  "main": "src/server.ts",
   "scripts": {
-    "start": "tsx src/index.ts",
-    "schedule": "tsx src/index.ts --schedule",
-    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/server.ts",
+    "dev": "tsx watch src/server.ts",
     "pages": "tsx -e \"import{buildPages}from'./src/pages.js';buildPages()\""
   },
   "engines": {
@@ -24,6 +23,7 @@
   "license": "ISC",
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.71",
+    "@modelcontextprotocol/sdk": "^1.27.1",
     "cheerio": "^1.2.0",
     "dotenv": "^17.3.1",
     "imapflow": "^1.2.12",

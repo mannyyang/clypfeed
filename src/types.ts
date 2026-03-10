@@ -14,11 +14,21 @@ export interface EmailContent {
   text: string;
 }
 
+export type DigestCategory =
+  | "claude-updates"
+  | "anthropic-product"
+  | "anthropic-company"
+  | "competitive"
+  | "ecosystem";
+
 export interface DigestItem {
   headline: string;
   summary: string;
   sourceUrl: string;
   priority: number;
+  category?: DigestCategory;
+  source?: string;
+  imageUrl?: string;
 }
 
 export interface Digest {

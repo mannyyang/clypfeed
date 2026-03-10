@@ -7,6 +7,7 @@ interface PublishedEntry {
   headline: string;
   url: string;
   date: string;
+  source?: string;
 }
 
 const publishedPath = join(process.cwd(), "output", "published.json");
@@ -90,6 +91,7 @@ export const saveDigestTool = tool(
         headline: item.headline,
         url: item.sourceUrl,
         date,
+        ...(item.source ? { source: item.source } : {}),
       }));
     if (entries.length > 0) {
       await appendPublished(entries);

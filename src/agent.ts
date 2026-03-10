@@ -27,7 +27,8 @@ Instructions:
    d. Direct competitive moves affecting Claude's positioning (OpenAI, Google, etc.)
 8. Deduplicate stories that appear in multiple newsletters, RSS feeds, or web sources
 9. Rank items by priority, keep top 3-5 items max
-10. Use save_digest to save the result as JSON with this exact schema:
+10. For each item, assign a category from: claude-updates, anthropic-product, anthropic-company, competitive, ecosystem. Set source to the name of the newsletter, blog, or outlet where you found it (e.g. "Axios", "OpenAI Blog", "TLDR"). If the source article has a prominent image (og:image, hero image, or thumbnail), include its URL as imageUrl; otherwise omit it.
+11. Use save_digest to save the result as JSON with this exact schema:
    {
      "date": "${today}",
      "items": [
@@ -35,7 +36,10 @@ Instructions:
          "headline": "Bold headline (1 line)",
          "summary": "2-3 sentences on what happened and why it matters",
          "sourceUrl": "URL to the original source",
-         "priority": 1
+         "priority": 1,
+         "category": "claude-updates | anthropic-product | anthropic-company | competitive | ecosystem",
+         "source": "Name of the outlet (e.g. Axios, TLDR, OpenAI Blog)",
+         "imageUrl": "URL to article image if available, otherwise omit"
        }
      ],
      "signal": "One sentence — the single most important takeaway today"

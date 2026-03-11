@@ -4,3 +4,4 @@ output/
 .env
 credentials.json
 *.log
+bin/

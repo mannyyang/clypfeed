@@ -11,11 +11,8 @@ export interface FeedEntry {
 }
 
 export interface ClypFeedConfig {
-  schedule: string;
   feeds: FeedEntry[];
 }
-
-const DEFAULT_SCHEDULE = "0 8 * * *";
 
 const configPath = join(PROJECT_DIR, "output", "config.json");
 
@@ -32,11 +29,10 @@ export async function loadConfig(): Promise<ClypFeedConfig> {
     const data = await readFile(configPath, "utf-8");
     const parsed = JSON.parse(data);
     return {
-      schedule: parsed.schedule || DEFAULT_SCHEDULE,
       feeds: Array.isArray(parsed.feeds) ? parsed.feeds : [],
     };
   } catch {
-    return { schedule: DEFAULT_SCHEDULE, feeds: [] };
+    return { feeds: [] };
   }
 }
 

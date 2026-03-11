@@ -4,14 +4,9 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 
 import { listDigests, getDigest, searchDigests } from "./tools/digest.js";
-import {
-  startScheduler,
-  stopScheduler,
-  getScheduleStatus,
-  setSchedule,
-  runDigestNow,
-} from "./tools/schedule.js";
 import { listFeeds, addFeed, removeFeed } from "./tools/feeds.js";
+import { runAgent } from "./agent.js";
+import { buildPages } from "./pages.js";
 
 const DIGEST_SYSTEM_PROMPT = `You are an AI news aggregator agent. Your job is to process newsletter emails and produce a daily AI news digest.
 
@@ -85,45 +80,22 @@ server.tool(
   })
 );
 
-// --- Schedule Management Tools ---
-
-server.tool(
-  "get_schedule",
-  "Get the current background digest schedule status (cron expression, active/inactive).",
-  {},
-  async () => ({
-    content: [{ type: "text", text: getScheduleStatus() }],
-  })
-);
-
-server.tool(
-  "set_schedule",
-  'Set the background cron schedule for automatic digest generation. Examples: "0 8 * * *" (daily 8am), "0 9 * * 1-5" (weekdays 9am).',
-  {
-    cron: z.string().describe("Cron expression for the schedule"),
-  },
-  async ({ cron }) => ({
-    content: [{ type: "text", text: await setSchedule(cron) }],
-  })
-);
-
-server.tool(
-  "stop_schedule",
-  "Stop the background digest schedule.",
-  {},
-  async () => {
-    stopScheduler();
-    return { content: [{ type: "text", text: "Schedule stopped." }] };
-  }
-);
+// --- Digest Generation Tool ---
 
 server.tool(
   "run_digest_now",
   "Trigger an immediate digest generation run. This fetches emails, RSS feeds, scrapes web sources, and uses Claude to produce a digest. May take a few minutes.",
   {},
-  async () => ({
-    content: [{ type: "text", text: await runDigestNow() }],
-  })
+  async () => {
+    try {
+      delete process.env.CLAUDECODE;
+      await runAgent();
+      await buildPages();
+      return { content: [{ type: "text", text: "Digest generated successfully. Use list_digests or get_digest to see results." }] };
+    } catch (err) {
+      return { content: [{ type: "text", text: `Digest generation failed: ${err instanceof Error ? err.message : String(err)}` }] };
+    }
+  }
 );
 
 // --- Feed Management Tools ---
@@ -201,15 +173,6 @@ server.resource(
 // --- Start ---
 
 async function main() {
-  // Start background scheduler
-  try {
-    await startScheduler();
-    console.error("[clypfeed] Background scheduler initialized");
-  } catch (err) {
-    console.error("[clypfeed] Scheduler init failed (continuing without schedule):", err);
-  }
-
-  // Connect MCP server via stdio
   const transport = new StdioServerTransport();
   await server.connect(transport);
   console.error("[clypfeed] MCP server connected via stdio");

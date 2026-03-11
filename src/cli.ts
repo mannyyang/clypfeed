@@ -1,42 +1,30 @@
 import "dotenv/config";
 
 import { listDigests, getDigest, searchDigests } from "./tools/digest.js";
-import {
-  stopScheduler,
-  getScheduleStatus,
-  setSchedule,
-  runDigestNow,
-} from "./tools/schedule.js";
 import { listFeeds, addFeed, removeFeed } from "./tools/feeds.js";
+import { runAgent } from "./agent.js";
 import { buildPages } from "./pages.js";
-import { loadConfig, saveConfig } from "./config.js";
 
 const USAGE = `ClypFeed CLI - AI news digest aggregator
 
 Usage: clypfeed <command> [subcommand] [args] [flags]
 
 Commands:
-  digest list [--limit N]           List available digests (default: 20)
-  digest get <date>                 Get digest for a specific date (YYYY-MM-DD)
-  digest search <query> [--days N]  Search digests by keyword (default: 7 days)
-  digest run                        Generate a new digest now
-
-  schedule status                   Show current schedule configuration
-  schedule set <cron>               Set digest schedule (e.g. "0 8 * * *")
-  schedule stop                     Clear the digest schedule
+  run                               Generate a new digest now
+  list [--limit N]                  List available digests (default: 20)
+  get <date>                        Get digest for a specific date (YYYY-MM-DD)
+  search <query> [--days N]         Search digests by keyword (default: 7 days)
+  pages                             Build HTML pages from digests
 
   feed list                         List configured RSS feeds
   feed add <name> <url>             Add an RSS feed
   feed remove <name>                Remove an RSS feed by name
 
-  pages                             Build HTML pages from digests
-
 Examples:
-  clypfeed digest list
-  clypfeed digest get 2026-03-10
-  clypfeed digest search "Claude" --days 14
-  clypfeed digest run
-  clypfeed schedule set "0 9 * * 1-5"
+  clypfeed run
+  clypfeed list
+  clypfeed get 2026-03-10
+  clypfeed search "Claude" --days 14
   clypfeed feed add "TechCrunch" "https://techcrunch.com/feed"`;
 
 function flag(name: string, fallback?: string): string | undefined {
@@ -55,75 +43,44 @@ async function main() {
   }
 
   switch (cmd) {
-    case "digest": {
-      switch (sub) {
-        case "list": {
-          const limit = Number(flag("limit", "20"));
-          console.log(await listDigests(limit));
-          break;
-        }
-        case "get": {
-          const date = rest[0];
-          if (!date) {
-            console.error("Usage: clypfeed digest get <YYYY-MM-DD>");
-            process.exit(1);
-          }
-          console.log(await getDigest(date));
-          break;
-        }
-        case "search": {
-          const query = rest[0];
-          if (!query) {
-            console.error("Usage: clypfeed digest search <query> [--days N]");
-            process.exit(1);
-          }
-          const days = Number(flag("days", "7"));
-          console.log(await searchDigests(query, days));
-          break;
-        }
-        case "run": {
-          console.log(await runDigestNow());
-          break;
-        }
-        default:
-          console.error(`Unknown digest subcommand: ${sub ?? "(none)"}\n`);
-          console.log(USAGE);
-          process.exit(1);
-      }
+    case "run": {
+      delete process.env.CLAUDECODE;
+      await runAgent();
+      await buildPages();
+      console.log("Digest generated and pages built.");
       break;
     }
 
-    case "schedule": {
-      switch (sub) {
-        case "status": {
-          const status = JSON.parse(getScheduleStatus());
-          const config = await loadConfig();
-          status.configuredCron = config.schedule || "(none)";
-          console.log(JSON.stringify(status, null, 2));
-          break;
-        }
-        case "set": {
-          const cron = rest[0];
-          if (!cron) {
-            console.error('Usage: clypfeed schedule set <cron>');
-            process.exit(1);
-          }
-          console.log(await setSchedule(cron));
-          break;
-        }
-        case "stop": {
-          stopScheduler();
-          const config = await loadConfig();
-          config.schedule = "";
-          await saveConfig(config);
-          console.log("Schedule stopped and cleared from config.");
-          break;
-        }
-        default:
-          console.error(`Unknown schedule subcommand: ${sub ?? "(none)"}\n`);
-          console.log(USAGE);
-          process.exit(1);
+    case "list": {
+      const limit = Number(flag("limit", "20"));
+      console.log(await listDigests(limit));
+      break;
+    }
+
+    case "get": {
+      const date = sub;
+      if (!date) {
+        console.error("Usage: clypfeed get <YYYY-MM-DD>");
+        process.exit(1);
       }
+      console.log(await getDigest(date));
+      break;
+    }
+
+    case "search": {
+      const query = sub;
+      if (!query) {
+        console.error("Usage: clypfeed search <query> [--days N]");
+        process.exit(1);
+      }
+      const days = Number(flag("days", "7"));
+      console.log(await searchDigests(query, days));
+      break;
+    }
+
+    case "pages": {
+      await buildPages();
+      console.log("Pages built successfully.");
       break;
     }
 
@@ -157,12 +114,6 @@ async function main() {
           console.log(USAGE);
           process.exit(1);
       }
-      break;
-    }
-
-    case "pages": {
-      await buildPages();
-      console.log("Pages built successfully.");
       break;
     }
 

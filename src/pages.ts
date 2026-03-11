@@ -18,7 +18,6 @@ interface PageConfig {
   title: string;
   subtitle?: string;
   digests: Digest[];
-  navLinks?: { label: string; href: string }[];
 }
 
 function formatDate(dateStr: string): string {
@@ -58,10 +57,6 @@ function buildHtml(config: PageConfig): string {
     b.date.localeCompare(a.date)
   );
 
-  const nav = (config.navLinks || [])
-    .map((link) => `<a href="${link.href}" class="nav-link">${link.label}</a>`)
-    .join(" ");
-
   const sections = sorted
     .map((digest) => {
       const items = digest.items.map(renderItem).join("\n");
@@ -97,17 +92,6 @@ function buildHtml(config: PageConfig): string {
     header { margin-bottom: 2rem; border-bottom: 1px solid #e5e5e5; padding-bottom: 1rem; }
     h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
     .tagline { color: #888; font-size: 0.85rem; margin-top: 0.15rem; }
-
-    nav { margin-top: 0.75rem; }
-    .nav-link {
-      font-size: 0.8rem;
-      color: #111;
-      text-decoration: none;
-      border: 1px solid #ddd;
-      padding: 0.25rem 0.75rem;
-      border-radius: 3px;
-    }
-    .nav-link:hover { background: #f5f5f5; }
 
     .digest { margin-bottom: 2.5rem; }
     .digest h2 {
@@ -190,7 +174,6 @@ function buildHtml(config: PageConfig): string {
   <header>
     <h1>ClypFeed</h1>
     <p class="tagline">${config.subtitle || "AI news digests"}</p>
-    ${nav ? `<nav>${nav}</nav>` : ""}
   </header>
   ${sections}
 </body>
@@ -211,7 +194,6 @@ export async function buildPages(): Promise<void> {
   }
 
   const sorted = [...digests].sort((a, b) => b.date.localeCompare(a.date));
-  const latest = sorted.slice(0, 1);
 
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - 7);
@@ -222,22 +204,9 @@ export async function buildPages(): Promise<void> {
     join(docsDir, "index.html"),
     buildHtml({
       title: "ClypFeed",
-      digests: latest,
-      navLinks: [{ label: "Past 7 days \u2192", href: "archive.html" }],
-    })
-  );
-
-  await writeFile(
-    join(docsDir, "archive.html"),
-    buildHtml({
-      title: "ClypFeed \u2014 Past 7 Days",
-      subtitle: "Past 7 days",
       digests: recentDigests,
-      navLinks: [{ label: "\u2190 Today", href: "index.html" }],
     })
   );
 
-  console.error(
-    `Built pages: ${latest.length} digest on index, ${recentDigests.length} on archive`
-  );
+  console.error(`Built index.html with ${recentDigests.length} digests`);
 }

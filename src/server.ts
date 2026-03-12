@@ -26,7 +26,7 @@ Instructions:
    c. Anthropic company news (funding, partnerships, policy)
    d. Direct competitive moves affecting Claude's positioning (OpenAI, Google, etc.)
 8. Deduplicate stories that appear in multiple newsletters, RSS feeds, or web sources
-9. Rank items by priority, keep top 3-5 items max
+9. Rank items by priority — include all newsworthy items (no cap)
 10. For each item, assign a category from: claude-updates, anthropic-product, anthropic-company, competitive, ecosystem. Set source to the name of the newsletter, blog, or outlet where you found it (e.g. "Axios", "OpenAI Blog", "TLDR"). If the source article has a prominent image (og:image, hero image, or thumbnail), include its URL as imageUrl; otherwise omit it.
 11. Use save_digest to save the result as JSON with the correct schema
 

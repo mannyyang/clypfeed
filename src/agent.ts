@@ -14,9 +14,13 @@ Instructions:
    - https://www.anthropic.com/news (Anthropic newsroom)
    - https://www.anthropic.com/engineering (Anthropic engineering blog)
    - https://api.github.com/repos/anthropics/claude-code/releases?per_page=3 (Claude Code releases — JSON format, check for new features, slash commands, and behavior changes)
-   - https://docs.anthropic.com/en/changelog (Anthropic API/product changelog — look for new model releases, API changes, rate limit updates)
-   - https://docs.anthropic.com/en/docs/claude-code/changelog (Claude Code feature changelog — look for new slash commands like /btw, new tools, settings, behavior changes)
+   - https://code.claude.com/docs/en/changelog (Claude Code changelog — look for new versions, slash commands, settings, behavior changes)
    - https://x.com/AnthropicAI (official Anthropic X/Twitter account)
+   - https://code.claude.com/docs/llms.txt (Claude Code docs index — scan for NEW or recently added pages that indicate new features)
+   - https://code.claude.com/docs/en/interactive-mode (Claude Code interactive features — check for new commands like /btw, keyboard shortcuts, UI features)
+   - https://code.claude.com/docs/en/commands (Claude Code commands reference — check for newly added slash commands)
+   - https://code.claude.com/docs/en/skills (Claude Code skills — check for new bundled skills)
+   - https://code.claude.com/docs/en/sub-agents (Claude Code sub-agents — check for new agent types or capabilities)
 7. Extract AI/ML news items, with this priority order:
    a. Claude model updates, releases, or capability changes (highest priority)
    b. Anthropic product news (Claude Code, Cowork, Claude.ai, MCP)
@@ -58,6 +62,8 @@ Rules:
 - If fewer than 2 genuinely newsworthy items, set signal to "Quiet day — nothing major to report."
 - Summaries MUST be under 50 words. If longer, rewrite shorter.
 - When parsing Claude Code releases, pay special attention to new slash commands, new tools, new settings, and behavior changes — these are the most actionable items for Claude Code users
+- IMPORTANT: New features sometimes appear in docs pages WITHOUT a changelog entry (e.g. /btw was added to interactive-mode docs but never listed in the changelog). Always check the docs pages for new content, not just changelogs and release notes.
+- When scanning docs pages, look for new sections, new commands, new keyboard shortcuts, or new features that were not present before — these are newsworthy even if there is no blog post or changelog entry about them
 - Keep summaries concise and factual`;
 }
 

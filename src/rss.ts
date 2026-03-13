@@ -31,7 +31,7 @@ export const DEFAULT_FEEDS: FeedEntry[] = [
   { name: "Simon Willison", url: "https://simonwillison.net/atom/everything/" },
   // Changelogs (Claude-specific feature detection)
   { name: "Anthropic Changelog", url: "https://docs.anthropic.com/en/changelog/rss.xml" },
-  { name: "Claude Code Changelog", url: "https://docs.anthropic.com/en/docs/claude-code/changelog.xml" },
+  { name: "Claude Code Changelog", url: "https://code.claude.com/docs/en/changelog.xml" },
 ];
 
 function extractItems(xml: string, sourceName: string): RssItem[] {

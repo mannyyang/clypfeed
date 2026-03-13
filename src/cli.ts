@@ -4,17 +4,19 @@ import { listDigests, getDigest, searchDigests } from "./tools/digest.js";
 import { listFeeds, addFeed, removeFeed } from "./tools/feeds.js";
 import { runAgent } from "./agent.js";
 import { buildPages } from "./pages.js";
+import { migrateJsonToSqlite } from "./migrate.js";
 
 const USAGE = `ClypFeed CLI - AI news digest aggregator
 
 Usage: clypfeed <command> [subcommand] [args] [flags]
 
 Commands:
-  run                               Generate a new digest now
+  run [--date YYYY-MM-DD]           Generate a digest (default: today)
   list [--limit N]                  List available digests (default: 20)
   get <date>                        Get digest for a specific date (YYYY-MM-DD)
   search <query> [--days N]         Search digests by keyword (default: 7 days)
   pages                             Build HTML pages from digests
+  migrate                           Migrate existing JSON digests to SQLite
 
   feed list                         List configured RSS feeds
   feed add <name> <url>             Add an RSS feed
@@ -22,6 +24,7 @@ Commands:
 
 Examples:
   clypfeed run
+  clypfeed run --date 2026-03-10
   clypfeed list
   clypfeed get 2026-03-10
   clypfeed search "Claude" --days 14
@@ -44,10 +47,19 @@ async function main() {
 
   switch (cmd) {
     case "run": {
-      delete process.env.CLAUDECODE;
-      await runAgent();
+      const date = flag("date");
+      if (date && !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        console.error("Invalid date format. Use YYYY-MM-DD.");
+        process.exit(1);
+      }
+      await runAgent(date);
       await buildPages();
       console.log("Digest generated and pages built.");
+      break;
+    }
+
+    case "migrate": {
+      await migrateJsonToSqlite();
       break;
     }
 

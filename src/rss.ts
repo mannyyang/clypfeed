@@ -5,7 +5,8 @@ export interface RssItem {
   source: string;
 }
 
-import { loadConfig, type FeedEntry } from "./config.js";
+import type { FeedEntry } from "./config.js";
+import { listFeeds, ensureFeeds } from "./db.js";
 
 // Curated high-signal AI/engineering feeds (all validated)
 export const DEFAULT_FEEDS: FeedEntry[] = [
@@ -28,6 +29,9 @@ export const DEFAULT_FEEDS: FeedEntry[] = [
   { name: "r/ClaudeCode", url: "https://www.reddit.com/r/ClaudeCode/.rss" },
   // Individual experts
   { name: "Simon Willison", url: "https://simonwillison.net/atom/everything/" },
+  // Changelogs (Claude-specific feature detection)
+  { name: "Anthropic Changelog", url: "https://docs.anthropic.com/en/changelog/rss.xml" },
+  { name: "Claude Code Changelog", url: "https://docs.anthropic.com/en/docs/claude-code/changelog.xml" },
 ];
 
 function extractItems(xml: string, sourceName: string): RssItem[] {
@@ -77,8 +81,13 @@ export async function fetchRssFeeds(
 ): Promise<RssItem[]> {
   let feedList = feeds;
   if (!feedList) {
-    const config = await loadConfig();
-    feedList = config.feeds.length > 0 ? config.feeds : DEFAULT_FEEDS;
+    try {
+      ensureFeeds(DEFAULT_FEEDS);
+      const dbFeeds = listFeeds();
+      feedList = dbFeeds.map((f) => ({ name: f.name, url: f.url }));
+    } catch {
+      feedList = DEFAULT_FEEDS;
+    }
   }
 
   const allItems: RssItem[] = [];

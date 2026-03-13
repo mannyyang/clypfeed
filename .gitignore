@@ -4,4 +4,7 @@ output/
 .env
 credentials.json
 *.log
+*.db
+*.db-wal
+*.db-shm
 bin/

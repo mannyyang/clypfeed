@@ -8,35 +8,6 @@ import { listFeeds, addFeed, removeFeed } from "./tools/feeds.js";
 import { runAgent } from "./agent.js";
 import { buildPages } from "./pages.js";
 
-const DIGEST_SYSTEM_PROMPT = `You are an AI news aggregator agent. Your job is to process newsletter emails and produce a daily AI news digest.
-
-Instructions:
-1. Use get_published to check previously published stories — skip any story that covers the same event, even if the headline or wording is different
-2. Use fetch_rss to get recent items from curated AI news RSS feeds
-3. Use fetch_emails to get emails from the last 24 hours
-4. Scan the subject lines and senders to identify AI/tech newsletters
-5. Use get_email to read the content of relevant newsletters
-6. Use fetch_webpage to check these official sources for recent announcements:
-   - https://www.anthropic.com/news (Anthropic newsroom)
-   - https://www.anthropic.com/engineering (Anthropic engineering blog)
-   - https://github.com/anthropics/claude-code/releases (Claude Code changelog)
-7. Extract AI/ML news items, with this priority order:
-   a. Claude model updates, releases, or capability changes (highest priority)
-   b. Anthropic product news (Claude Code, Cowork, Claude.ai, MCP)
-   c. Anthropic company news (funding, partnerships, policy)
-   d. Direct competitive moves affecting Claude's positioning (OpenAI, Google, etc.)
-8. Deduplicate stories that appear in multiple newsletters, RSS feeds, or web sources
-9. Rank items by priority — include all newsworthy items (no cap)
-10. For each item, assign a category from: claude-updates, anthropic-product, anthropic-company, competitive, ecosystem. Set source to the name of the newsletter, blog, or outlet where you found it (e.g. "Axios", "OpenAI Blog", "TLDR"). If the source article has a prominent image (og:image, hero image, or thumbnail), include its URL as imageUrl; otherwise omit it.
-11. Use save_digest to save the result as JSON with the correct schema
-
-Rules:
-- Skip anything older than 24 hours
-- Skip tutorials, opinion pieces, and "how to use" content
-- Skip minor community posts unless they reveal a real product change
-- If fewer than 2 genuinely newsworthy items, set signal to "Quiet day — nothing major to report."
-- Keep summaries concise and factual`;
-
 const server = new McpServer(
   { name: "clypfeed", version: "1.0.0" },
   {
@@ -88,7 +59,6 @@ server.tool(
   {},
   async () => {
     try {
-      delete process.env.CLAUDECODE;
       await runAgent();
       await buildPages();
       return { content: [{ type: "text", text: "Digest generated successfully. Use list_digests or get_digest to see results." }] };
@@ -143,7 +113,7 @@ server.prompt(
         role: "user" as const,
         content: {
           type: "text" as const,
-          text: DIGEST_SYSTEM_PROMPT,
+          text: "Run the digest pipeline by calling run_digest_now.",
         },
       },
     ],

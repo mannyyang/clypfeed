@@ -1,98 +1,58 @@
-import { readdir, readFile } from "node:fs/promises";
-import { join } from "node:path";
-import { getOutputDir } from "../config.js";
-import type { Digest } from "../types.js";
+import { listDigestDates, getFullDigest, searchItems } from "../db.js";
+import type { DigestItem } from "../types.js";
+import { CATEGORY_ORDER, CATEGORY_LABELS, groupByCategory } from "../types.js";
 
-export async function listDigests(limit: number = 20): Promise<string> {
-  const outputDir = getOutputDir();
-  let files: string[];
-  try {
-    files = (await readdir(outputDir)).filter(
-      (f) => f.endsWith(".json") && f !== "published.json" && f !== "config.json"
-    );
-  } catch {
-    return "No digests found. The output directory does not exist yet.";
+function formatGroupedItems(items: DigestItem[]): string {
+  const grouped = groupByCategory(items);
+  const sections: string[] = [];
+  let idx = 1;
+
+  for (const cat of CATEGORY_ORDER) {
+    const catItems = grouped.get(cat);
+    if (!catItems || catItems.length === 0) continue;
+
+    sections.push(`=== ${CATEGORY_LABELS[cat].toUpperCase()} ===`);
+    for (const item of catItems) {
+      let entry = `${idx}. ${item.headline}`;
+      if (item.tldr) {
+        entry += `\n   TL;DR: ${item.tldr}`;
+      }
+      entry += `\n   ${item.summary}`;
+      entry += `\n   Source: ${item.sourceUrl}${item.source ? ` (via ${item.source})` : ""}`;
+      sections.push(entry);
+      idx++;
+    }
+    sections.push("");
   }
 
-  if (files.length === 0) return "No digests found.";
+  return sections.join("\n");
+}
 
-  const dates = files
-    .map((f) => f.replace(".json", ""))
-    .sort((a, b) => b.localeCompare(a))
-    .slice(0, limit);
-
+export async function listDigests(limit: number = 20): Promise<string> {
+  const dates = listDigestDates(limit);
+  if (dates.length === 0) return "No digests found.";
   return `Available digests (${dates.length}):\n${dates.map((d) => `- ${d}`).join("\n")}`;
 }
 
 export async function getDigest(date: string): Promise<string> {
-  const outputDir = getOutputDir();
-  const filePath = join(outputDir, `${date}.json`);
+  const digest = getFullDigest(date);
+  if (!digest) return `No digest found for ${date}.`;
 
-  try {
-    const data = await readFile(filePath, "utf-8");
-    const digest: Digest = JSON.parse(data);
-
-    const items = digest.items
-      .map(
-        (item, i) =>
-          `${i + 1}. [${item.category || "general"}] ${item.headline}\n   ${item.summary}\n   Source: ${item.sourceUrl}${item.source ? ` (via ${item.source})` : ""}`
-      )
-      .join("\n\n");
-
-    return `Digest for ${digest.date}\nSignal: ${digest.signal}\n\n${items}`;
-  } catch {
-    return `No digest found for ${date}.`;
-  }
+  const items = formatGroupedItems(digest.items);
+  return `Digest for ${digest.date}\nSignal: ${digest.signal}\n\n${items}`;
 }
 
 export async function searchDigests(
   query: string,
   days: number = 7
 ): Promise<string> {
-  const outputDir = getOutputDir();
-  let files: string[];
-  try {
-    files = (await readdir(outputDir)).filter(
-      (f) => f.endsWith(".json") && f !== "published.json" && f !== "config.json"
-    );
-  } catch {
-    return "No digests found.";
-  }
-
-  const cutoff = new Date();
-  cutoff.setDate(cutoff.getDate() - days);
-  const cutoffStr = cutoff.toISOString().split("T")[0];
-
-  const recentFiles = files
-    .map((f) => f.replace(".json", ""))
-    .filter((date) => date >= cutoffStr)
-    .sort((a, b) => b.localeCompare(a));
-
-  const queryLower = query.toLowerCase();
-  const matches: string[] = [];
-
-  for (const date of recentFiles) {
-    try {
-      const data = await readFile(join(outputDir, `${date}.json`), "utf-8");
-      const digest: Digest = JSON.parse(data);
-
-      for (const item of digest.items) {
-        if (
-          item.headline.toLowerCase().includes(queryLower) ||
-          item.summary.toLowerCase().includes(queryLower)
-        ) {
-          matches.push(
-            `[${date}] ${item.headline}\n  ${item.summary}\n  ${item.sourceUrl}`
-          );
-        }
-      }
-    } catch {
-      // skip unreadable files
-    }
-  }
-
-  if (matches.length === 0)
+  const results = searchItems(query, days);
+  if (results.length === 0)
     return `No results for "${query}" in the last ${days} days.`;
 
-  return `Found ${matches.length} result(s) for "${query}":\n\n${matches.join("\n\n")}`;
+  const lines = results.map(
+    (r) => `[${r.digest_date}] ${r.headline}\n  ${r.summary}\n  ${r.sourceUrl}`
+  );
+
+  return `Found ${results.length} result(s) for "${query}":\n\n${lines.join("\n\n")}`;
 }

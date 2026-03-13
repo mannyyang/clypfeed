@@ -1,24 +1,19 @@
-import { readdir, readFile, writeFile, mkdir } from "node:fs/promises";
+import { writeFile, mkdir } from "node:fs/promises";
 import { join } from "node:path";
-import type { Digest, DigestItem } from "./types.js";
-import { getOutputDir, getProjectDir } from "./config.js";
+import type { Digest, DigestItem, DigestCategory } from "./types.js";
+import { CATEGORY_ORDER, CATEGORY_LABELS, groupByCategory } from "./types.js";
+import { getProjectDir } from "./config.js";
+import { listDigestDates, getFullDigest } from "./db.js";
 
-const outputDir = getOutputDir();
 const docsDir = join(getProjectDir(), "docs");
 
-const CATEGORY_LABELS: Record<string, string> = {
-  "claude-updates": "Claude Updates",
-  "anthropic-product": "Anthropic Product",
-  "anthropic-company": "Anthropic Company",
-  competitive: "Competitive",
-  ecosystem: "Ecosystem",
+const CATEGORY_COLORS: Record<DigestCategory, { bg: string; text: string; border: string }> = {
+  "claude-updates": { bg: "#fff3e0", text: "#e65100", border: "#f57c00" },
+  "anthropic-product": { bg: "#e3f2fd", text: "#1565c0", border: "#1976d2" },
+  "anthropic-company": { bg: "#f3e5f5", text: "#7b1fa2", border: "#8e24aa" },
+  competitive: { bg: "#fce4ec", text: "#c62828", border: "#d32f2f" },
+  ecosystem: { bg: "#e8f5e9", text: "#2e7d32", border: "#388e3c" },
 };
-
-interface PageConfig {
-  title: string;
-  subtitle?: string;
-  digests: Digest[];
-}
 
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr + "T00:00:00");
@@ -34,38 +29,59 @@ function renderItem(item: DigestItem): string {
   const image = item.imageUrl
     ? `<img class="item-image" src="${item.imageUrl}" alt="" loading="lazy" onerror="this.style.display='none'" />`
     : "";
-  const category = item.category
-    ? `<span class="category-tag">${CATEGORY_LABELS[item.category] || "Ecosystem"}</span>`
-    : "";
   const source = item.source
     ? `<span class="source">via ${item.source}</span>`
     : "";
+  const tldr = item.tldr
+    ? `<p class="tldr">${item.tldr}</p>`
+    : "";
 
   return `
-        <article class="item">
-          ${image}
-          <div class="item-content">
-            <div class="item-meta">${category}${source}</div>
-            <h3><a href="${item.sourceUrl}">${item.headline}</a></h3>
-            <p>${item.summary}</p>
-          </div>
-        </article>`;
+          <article class="item">
+            ${image}
+            <div class="item-content">
+              ${source ? `<div class="item-meta">${source}</div>` : ""}
+              <h4><a href="${item.sourceUrl}">${item.headline}</a></h4>
+              ${tldr}
+              <p>${item.summary}</p>
+            </div>
+          </article>`;
 }
 
-function buildHtml(config: PageConfig): string {
-  const sorted = [...config.digests].sort((a, b) =>
-    b.date.localeCompare(a.date)
-  );
+function renderCategorySection(category: DigestCategory, items: DigestItem[]): string {
+  const colors = CATEGORY_COLORS[category];
+  const label = CATEGORY_LABELS[category];
+  const renderedItems = items.map(renderItem).join("\n");
+
+  return `
+        <div class="category-section" style="border-left: 3px solid ${colors.border}; padding-left: 1rem; margin-bottom: 1.5rem;">
+          <h3 class="category-header" style="color: ${colors.text};">
+            <span class="category-tag" style="background: ${colors.bg}; color: ${colors.text};">${label}</span>
+          </h3>
+          ${renderedItems}
+        </div>`;
+}
+
+function buildHtml(title: string, digests: Digest[]): string {
+  const sorted = [...digests].sort((a, b) => b.date.localeCompare(a.date));
 
   const sections = sorted
     .map((digest) => {
-      const items = digest.items.map(renderItem).join("\n");
+      const grouped = groupByCategory(digest.items);
+      const categorySections: string[] = [];
+
+      for (const cat of CATEGORY_ORDER) {
+        const catItems = grouped.get(cat);
+        if (catItems && catItems.length > 0) {
+          categorySections.push(renderCategorySection(cat, catItems));
+        }
+      }
 
       return `
     <section class="digest">
       <h2>${formatDate(digest.date)}</h2>
       <div class="signal">${digest.signal}</div>
-      ${items || '<p class="empty">No items today.</p>'}
+      ${categorySections.join("\n") || '<p class="empty">No items today.</p>'}
     </section>`;
     })
     .join("\n");
@@ -75,7 +91,7 @@ function buildHtml(config: PageConfig): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${config.title}</title>
+  <title>${title}</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -83,7 +99,7 @@ function buildHtml(config: PageConfig): string {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: #fff;
       color: #111;
-      max-width: 640px;
+      max-width: 700px;
       margin: 0 auto;
       padding: 2rem 1rem;
       line-height: 1.6;
@@ -113,21 +129,39 @@ function buildHtml(config: PageConfig): string {
       color: #333;
     }
 
+    .category-header {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.75rem;
+    }
+
+    .category-tag {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 2px 8px;
+      border-radius: 3px;
+    }
+
     .item {
-      margin-bottom: 1.25rem;
-      padding-bottom: 1.25rem;
-      border-bottom: 1px solid #eee;
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #f0f0f0;
       overflow: hidden;
     }
-    .item:last-child { border-bottom: none; }
+    .item:last-child { border-bottom: none; padding-bottom: 0; }
 
     .item-image {
       float: right;
-      width: 120px;
-      height: 80px;
+      width: 100px;
+      height: 66px;
       object-fit: cover;
       border-radius: 4px;
-      margin-left: 1rem;
+      margin-left: 0.75rem;
       margin-bottom: 0.5rem;
       background: #f0f0f0;
     }
@@ -135,21 +169,7 @@ function buildHtml(config: PageConfig): string {
     .item-content { overflow: hidden; }
 
     .item-meta {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.35rem;
-    }
-
-    .category-tag {
-      font-size: 0.65rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      background: #f0f0f0;
-      color: #555;
-      padding: 2px 6px;
-      border-radius: 2px;
+      margin-bottom: 0.2rem;
     }
 
     .source {
@@ -157,23 +177,31 @@ function buildHtml(config: PageConfig): string {
       color: #999;
     }
 
-    .item h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.3rem; line-height: 1.3; }
-    .item h3 a { color: #111; text-decoration: none; }
-    .item h3 a:hover { text-decoration: underline; }
+    .item h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.2rem; line-height: 1.3; }
+    .item h4 a { color: #111; text-decoration: none; }
+    .item h4 a:hover { text-decoration: underline; }
 
-    .item p { color: #555; font-size: 0.85rem; line-height: 1.6; }
+    .item .tldr {
+      color: #333;
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-bottom: 0.15rem;
+      line-height: 1.4;
+    }
+
+    .item p { color: #666; font-size: 0.8rem; line-height: 1.5; }
 
     .empty { color: #999; font-style: italic; }
 
     @media (max-width: 480px) {
-      .item-image { width: 80px; height: 56px; }
+      .item-image { width: 72px; height: 48px; }
     }
   </style>
 </head>
 <body>
   <header>
     <h1>ClypFeed</h1>
-    <p class="tagline">${config.subtitle || "AI news digests"}</p>
+    <p class="tagline">AI news digests</p>
   </header>
   ${sections}
 </body>
@@ -183,29 +211,17 @@ function buildHtml(config: PageConfig): string {
 export async function buildPages(): Promise<void> {
   await mkdir(docsDir, { recursive: true });
 
-  const files = (await readdir(outputDir)).filter(
-    (f: string) => f.endsWith(".json") && f !== "published.json"
-  );
+  const dates = listDigestDates(7);
+  const recentDigests: Digest[] = [];
 
-  const digests: Digest[] = [];
-  for (const file of files) {
-    const raw = await readFile(join(outputDir, file), "utf-8");
-    digests.push(JSON.parse(raw));
+  for (const date of dates) {
+    const digest = getFullDigest(date);
+    if (digest) recentDigests.push(digest);
   }
-
-  const sorted = [...digests].sort((a, b) => b.date.localeCompare(a.date));
-
-  const cutoff = new Date();
-  cutoff.setDate(cutoff.getDate() - 7);
-  const cutoffStr = cutoff.toISOString().split("T")[0];
-  const recentDigests = sorted.filter((d) => d.date >= cutoffStr);
 
   await writeFile(
     join(docsDir, "index.html"),
-    buildHtml({
-      title: "ClypFeed",
-      digests: recentDigests,
-    })
+    buildHtml("ClypFeed", recentDigests)
   );
 
   console.error(`Built index.html with ${recentDigests.length} digests`);

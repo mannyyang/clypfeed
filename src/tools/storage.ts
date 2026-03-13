@@ -1,44 +1,14 @@
 import { tool } from "@anthropic-ai/claude-agent-sdk";
 import { z } from "zod";
-import { mkdir, writeFile, readFile } from "node:fs/promises";
-import { join } from "node:path";
-import { getOutputDir } from "../config.js";
-
-interface PublishedEntry {
-  headline: string;
-  url: string;
-  date: string;
-  source?: string;
-}
-
-const publishedPath = join(getOutputDir(), "published.json");
-
-async function loadPublished(): Promise<PublishedEntry[]> {
-  try {
-    const data = await readFile(publishedPath, "utf-8");
-    return JSON.parse(data);
-  } catch {
-    return [];
-  }
-}
-
-async function appendPublished(entries: PublishedEntry[]): Promise<void> {
-  const existing = await loadPublished();
-  const existingUrls = new Set(existing.map((e) => e.url));
-  const newEntries = entries.filter((e) => !existingUrls.has(e.url));
-  await writeFile(
-    publishedPath,
-    JSON.stringify([...existing, ...newEntries], null, 2),
-    "utf-8"
-  );
-}
+import { saveFullDigest, getPublishedUrls } from "../db.js";
+import type { Digest } from "../types.js";
 
 export const getPublishedTool = tool(
   "get_published",
   "Get previously published stories (headline + URL). Use this before creating a digest to avoid duplicates. Compare headlines semantically — different wording about the same event counts as a duplicate.",
   {},
   async () => {
-    const entries = await loadPublished();
+    const entries = getPublishedUrls();
     return {
       content: [
         {
@@ -55,19 +25,13 @@ export const getPublishedTool = tool(
 
 export const saveDigestTool = tool(
   "save_digest",
-  "Save the final AI news digest as a JSON file to the output directory. The digest parameter should be a valid JSON string. This also records published URLs to prevent duplicates in future runs.",
+  "Save the final AI news digest. The digest parameter should be a valid JSON string. This also records published URLs to prevent duplicates in future runs.",
   {
     date: z.string().describe("Date string in YYYY-MM-DD format"),
     digest: z.string().describe("JSON string of the digest object with items array and signal"),
   },
   async ({ date, digest }) => {
-    const outputDir = getOutputDir();
-    const filePath = join(outputDir, `${date}.json`);
-
-    await mkdir(outputDir, { recursive: true });
-
-    // Validate JSON
-    let parsed;
+    let parsed: Digest;
     try {
       parsed = JSON.parse(digest);
     } catch {
@@ -75,34 +39,21 @@ export const saveDigestTool = tool(
         content: [
           {
             type: "text" as const,
-            text: `Error: Invalid JSON in digest parameter. Please provide valid JSON.`,
+            text: "Error: Invalid JSON in digest parameter. Please provide valid JSON.",
           },
         ],
         isError: true,
       };
     }
 
-    // Write formatted JSON
-    await writeFile(filePath, JSON.stringify(parsed, null, 2), "utf-8");
-
-    // Track published stories
-    const entries: PublishedEntry[] = (parsed.items || [])
-      .filter((item: any) => item.sourceUrl && item.headline)
-      .map((item: any) => ({
-        headline: item.headline,
-        url: item.sourceUrl,
-        date,
-        ...(item.source ? { source: item.source } : {}),
-      }));
-    if (entries.length > 0) {
-      await appendPublished(entries);
-    }
+    parsed.date = date;
+    saveFullDigest(parsed);
 
     return {
       content: [
         {
           type: "text" as const,
-          text: `Digest saved to ${filePath}. Tracked ${entries.length} stories as published.`,
+          text: `Digest saved to SQLite for ${date}. Tracked ${parsed.items.length} stories as published.`,
         },
       ],
     };

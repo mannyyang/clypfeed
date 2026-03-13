@@ -3,7 +3,7 @@ import { z } from "zod";
 import { fetchRecentEmails, getEmailBody } from "../imap.js";
 import { parseEmailHtml } from "../parser.js";
 import { saveDigestTool, getPublishedTool } from "./storage.js";
-import { fetchWebpageTool, fetchRssTool } from "./web.js";
+import { fetchWebpageTool, fetchRssTool, fetchDocsDiffTool } from "./web.js";
 
 const fetchEmailsTool = tool(
   "fetch_emails",
@@ -47,5 +47,5 @@ const getEmailTool = tool(
 
 export const gmailMcpServer = createSdkMcpServer({
   name: "gmail-tools",
-  tools: [fetchEmailsTool, getEmailTool, fetchWebpageTool, fetchRssTool, getPublishedTool, saveDigestTool],
+  tools: [fetchEmailsTool, getEmailTool, fetchWebpageTool, fetchRssTool, fetchDocsDiffTool, getPublishedTool, saveDigestTool],
 });

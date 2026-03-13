@@ -48,6 +48,12 @@ export function getDb(): Database.Database {
       created_at    TEXT NOT NULL DEFAULT (datetime('now'))
     );
 
+    CREATE TABLE IF NOT EXISTS docs_snapshots (
+      url           TEXT PRIMARY KEY,
+      content       TEXT NOT NULL,
+      last_checked  TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
     CREATE INDEX IF NOT EXISTS idx_items_date ON items(digest_date);
     CREATE INDEX IF NOT EXISTS idx_items_category ON items(category);
     CREATE INDEX IF NOT EXISTS idx_items_source_url ON items(source_url);
@@ -267,6 +273,29 @@ export function seedDefaultFeeds(feeds: Array<{ name: string; url: string }>): v
 export function getFeedCount(): number {
   const d = getDb();
   return (d.prepare("SELECT COUNT(*) as count FROM feeds WHERE enabled = 1").get() as CountRow).count;
+}
+
+// --- Docs Snapshots ---
+
+interface SnapshotRow {
+  url: string;
+  content: string;
+  last_checked: string;
+}
+
+export function getDocsSnapshot(url: string): string | null {
+  const d = getDb();
+  const row = d.prepare("SELECT content FROM docs_snapshots WHERE url = ?").get(url) as SnapshotRow | undefined;
+  return row?.content ?? null;
+}
+
+export function saveDocsSnapshot(url: string, content: string): void {
+  const d = getDb();
+  d.prepare(`
+    INSERT INTO docs_snapshots (url, content, last_checked)
+    VALUES (?, ?, datetime('now'))
+    ON CONFLICT(url) DO UPDATE SET content = excluded.content, last_checked = datetime('now')
+  `).run(url, content);
 }
 
 // --- Helpers ---

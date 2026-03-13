@@ -16,28 +16,30 @@ Instructions:
    - https://api.github.com/repos/anthropics/claude-code/releases?per_page=3 (Claude Code releases — JSON format, check for new features, slash commands, and behavior changes)
    - https://code.claude.com/docs/en/changelog (Claude Code changelog — look for new versions, slash commands, settings, behavior changes)
    - https://x.com/AnthropicAI (official Anthropic X/Twitter account)
-   - https://code.claude.com/docs/llms.txt (Claude Code docs index — scan for NEW or recently added pages that indicate new features)
-   - https://code.claude.com/docs/en/interactive-mode (Claude Code interactive features — check for new commands like /btw, keyboard shortcuts, UI features)
-   - https://code.claude.com/docs/en/commands (Claude Code commands reference — check for newly added slash commands)
-   - https://code.claude.com/docs/en/skills (Claude Code skills — check for new bundled skills)
-   - https://code.claude.com/docs/en/sub-agents (Claude Code sub-agents — check for new agent types or capabilities)
-7. Extract AI/ML news items, with this priority order:
+7. Use fetch_docs_diff (NOT fetch_webpage) to check these docs pages for NEW content:
+   - https://code.claude.com/docs/llms.txt (Claude Code docs index — scan for NEW or recently added pages)
+   - https://code.claude.com/docs/en/interactive-mode (Claude Code interactive features — new commands like /btw, keyboard shortcuts, UI features)
+   - https://code.claude.com/docs/en/commands (Claude Code commands reference — newly added slash commands)
+   - https://code.claude.com/docs/en/skills (Claude Code skills — new bundled skills)
+   - https://code.claude.com/docs/en/sub-agents (Claude Code sub-agents — new agent types or capabilities)
+   fetch_docs_diff compares the page against a stored snapshot and returns ONLY new/changed content. If it says "first snapshot", review ALL content for recently added features. If it reports changes, those are NEW features worth reporting.
+8. Extract AI/ML news items, with this priority order:
    a. Claude model updates, releases, or capability changes (highest priority)
    b. Anthropic product news (Claude Code, Cowork, Claude.ai, MCP)
    c. Anthropic company news (funding, partnerships, policy)
    d. Direct competitive moves affecting Claude's positioning (OpenAI, Google, etc.)
    e. Ecosystem news (broader AI industry, tools, frameworks)
-8. Deduplicate stories that appear in multiple newsletters, RSS feeds, or web sources
-9. Rank items by priority — include all newsworthy items (no cap)
-10. Assign each item a category using these definitions:
+9. Deduplicate stories that appear in multiple newsletters, RSS feeds, or web sources
+10. Rank items by priority — include all newsworthy items (no cap)
+11. Assign each item a category using these definitions:
     - claude-updates: Changes to Claude models themselves — new versions, capability changes, benchmarks, safety findings, system behavior
     - anthropic-product: Anthropic product/feature updates — Claude Code releases, Claude.ai changes, API updates, MCP, pricing, new slash commands
     - anthropic-company: Corporate Anthropic news — funding, hiring, offices, leadership, policy, partnerships, legal
     - competitive: Direct competitor moves — new models from OpenAI/Google/Meta, competitive product launches
     - ecosystem: Broader AI ecosystem — acquisitions, tools, frameworks, community, research not directly about Anthropic
-11. Order items by category first (claude-updates, then anthropic-product, then anthropic-company, then competitive, then ecosystem), then by priority within each category
-12. Set source to the name of the newsletter, blog, or outlet where you found it (e.g. "Axios", "OpenAI Blog", "TLDR"). If the source article has a prominent image (og:image, hero image, or thumbnail), include its URL as imageUrl; otherwise omit it.
-13. Use save_digest to save the result as JSON with this exact schema:
+12. Order items by category first (claude-updates, then anthropic-product, then anthropic-company, then competitive, then ecosystem), then by priority within each category
+13. Set source to the name of the newsletter, blog, or outlet where you found it (e.g. "Axios", "OpenAI Blog", "TLDR"). If the source article has a prominent image (og:image, hero image, or thumbnail), include its URL as imageUrl; otherwise omit it.
+14. Use save_digest to save the result as JSON with this exact schema:
    {
      "date": "${targetDate}",
      "items": [
@@ -96,6 +98,7 @@ export async function runAgent(targetDate?: string) {
         "mcp__gmail-tools__get_email",
         "mcp__gmail-tools__fetch_webpage",
         "mcp__gmail-tools__fetch_rss",
+        "mcp__gmail-tools__fetch_docs_diff",
         "mcp__gmail-tools__get_published",
         "mcp__gmail-tools__save_digest",
       ],

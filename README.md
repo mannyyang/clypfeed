@@ -1,5 +1,7 @@
 # ClypFeed
 
+**Live site: https://mannyyang.github.io/clypfeed/**
+
 AI news digest CLI that ingests Gmail newsletters and RSS feeds, extracts AI/ML news, and produces daily digests using the [Claude Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview).
 
 ## Install

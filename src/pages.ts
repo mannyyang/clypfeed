@@ -25,7 +25,8 @@ function formatDate(dateStr: string): string {
   });
 }
 
-function renderItem(item: DigestItem): string {
+function renderItem(item: DigestItem, category: DigestCategory): string {
+  const colors = CATEGORY_COLORS[category];
   const image = item.imageUrl
     ? `<img class="item-image" src="${item.imageUrl}" alt="" loading="lazy" onerror="this.style.display='none'" />`
     : "";
@@ -37,29 +38,20 @@ function renderItem(item: DigestItem): string {
     : "";
 
   return `
-          <article class="item">
-            ${image}
-            <div class="item-content">
-              ${source ? `<div class="item-meta">${source}</div>` : ""}
-              <h4><a href="${item.sourceUrl}">${item.headline}</a></h4>
-              ${tldr}
-              <p>${item.summary}</p>
-            </div>
-          </article>`;
+            <article class="card" style="border-top: 3px solid ${colors.border};">
+              ${image}
+              <div class="card-body">
+                <span class="category-tag" style="background: ${colors.bg}; color: ${colors.text};">${CATEGORY_LABELS[category]}</span>
+                <h4><a href="${item.sourceUrl}">${item.headline}</a></h4>
+                ${tldr}
+                <p>${item.summary}</p>
+                ${source ? `<div class="item-meta">${source}</div>` : ""}
+              </div>
+            </article>`;
 }
 
-function renderCategorySection(category: DigestCategory, items: DigestItem[]): string {
-  const colors = CATEGORY_COLORS[category];
-  const label = CATEGORY_LABELS[category];
-  const renderedItems = items.map(renderItem).join("\n");
-
-  return `
-        <div class="category-section" style="border-left: 3px solid ${colors.border}; padding-left: 1rem; margin-bottom: 1.5rem;">
-          <h3 class="category-header" style="color: ${colors.text};">
-            <span class="category-tag" style="background: ${colors.bg}; color: ${colors.text};">${label}</span>
-          </h3>
-          ${renderedItems}
-        </div>`;
+function renderCategoryCards(category: DigestCategory, items: DigestItem[]): string {
+  return items.map((item) => renderItem(item, category)).join("\n");
 }
 
 function buildHtml(title: string, digests: Digest[]): string {
@@ -68,12 +60,12 @@ function buildHtml(title: string, digests: Digest[]): string {
   const sections = sorted
     .map((digest) => {
       const grouped = groupByCategory(digest.items);
-      const categorySections: string[] = [];
+      const cards: string[] = [];
 
       for (const cat of CATEGORY_ORDER) {
         const catItems = grouped.get(cat);
         if (catItems && catItems.length > 0) {
-          categorySections.push(renderCategorySection(cat, catItems));
+          cards.push(renderCategoryCards(cat as DigestCategory, catItems));
         }
       }
 
@@ -81,7 +73,9 @@ function buildHtml(title: string, digests: Digest[]): string {
     <section class="digest">
       <h2>${formatDate(digest.date)}</h2>
       <div class="signal">${digest.signal}</div>
-      ${categorySections.join("\n") || '<p class="empty">No items today.</p>'}
+      <div class="bento-grid">
+        ${cards.join("\n") || '<p class="empty">No items today.</p>'}
+      </div>
     </section>`;
     })
     .join("\n");
@@ -97,19 +91,22 @@ function buildHtml(title: string, digests: Digest[]): string {
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #fff;
+      background: #f5f5f7;
       color: #111;
-      max-width: 700px;
+      max-width: 960px;
       margin: 0 auto;
-      padding: 2rem 1rem;
+      padding: 2rem 1.5rem;
       line-height: 1.6;
     }
 
-    header { margin-bottom: 2rem; border-bottom: 1px solid #e5e5e5; padding-bottom: 1rem; }
-    h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
-    .tagline { color: #888; font-size: 0.85rem; margin-top: 0.15rem; }
+    header {
+      margin-bottom: 2.5rem;
+      padding-bottom: 1rem;
+    }
+    h1 { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.03em; }
+    .tagline { color: #888; font-size: 0.85rem; margin-top: 0.25rem; }
 
-    .digest { margin-bottom: 2.5rem; }
+    .digest { margin-bottom: 3rem; }
     .digest h2 {
       font-size: 0.8rem;
       font-weight: 600;
@@ -120,81 +117,103 @@ function buildHtml(title: string, digests: Digest[]): string {
     }
 
     .signal {
-      background: #f8f8f8;
-      border-left: 3px solid #111;
-      padding: 0.75rem 1rem;
+      background: #fff;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
       margin-bottom: 1.25rem;
       font-size: 0.9rem;
       line-height: 1.5;
       color: #333;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
     }
 
-    .category-header {
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 1.25rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      display: flex;
+      flex-direction: column;
+      transition: box-shadow 0.15s ease;
+    }
+    .card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .card .item-image {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 8px;
       margin-bottom: 0.75rem;
+      background: #f0f0f0;
+    }
+
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
     }
 
     .category-tag {
       display: inline-block;
-      font-size: 0.65rem;
-      font-weight: 600;
+      font-size: 0.6rem;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
-      padding: 2px 8px;
-      border-radius: 3px;
-    }
-
-    .item {
-      margin-bottom: 1rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid #f0f0f0;
-      overflow: hidden;
-    }
-    .item:last-child { border-bottom: none; padding-bottom: 0; }
-
-    .item-image {
-      float: right;
-      width: 100px;
-      height: 66px;
-      object-fit: cover;
-      border-radius: 4px;
-      margin-left: 0.75rem;
+      letter-spacing: 0.05em;
+      padding: 3px 8px;
+      border-radius: 6px;
       margin-bottom: 0.5rem;
-      background: #f0f0f0;
+      align-self: flex-start;
     }
 
-    .item-content { overflow: hidden; }
+    .card h4 {
+      font-size: 0.9rem;
+      font-weight: 650;
+      margin-bottom: 0.35rem;
+      line-height: 1.35;
+    }
+    .card h4 a { color: #111; text-decoration: none; }
+    .card h4 a:hover { text-decoration: underline; }
+
+    .card .tldr {
+      color: #333;
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+      line-height: 1.4;
+    }
+
+    .card p {
+      color: #666;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      flex: 1;
+    }
 
     .item-meta {
-      margin-bottom: 0.2rem;
+      margin-top: auto;
+      padding-top: 0.5rem;
     }
 
     .source {
       font-size: 0.7rem;
-      color: #999;
+      color: #aaa;
     }
-
-    .item h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.2rem; line-height: 1.3; }
-    .item h4 a { color: #111; text-decoration: none; }
-    .item h4 a:hover { text-decoration: underline; }
-
-    .item .tldr {
-      color: #333;
-      font-size: 0.8rem;
-      font-weight: 500;
-      margin-bottom: 0.15rem;
-      line-height: 1.4;
-    }
-
-    .item p { color: #666; font-size: 0.8rem; line-height: 1.5; }
 
     .empty { color: #999; font-style: italic; }
 
-    @media (max-width: 480px) {
-      .item-image { width: 72px; height: 48px; }
+    @media (max-width: 600px) {
+      .bento-grid {
+        grid-template-columns: 1fr;
+      }
+      .card .item-image { height: 100px; }
     }
   </style>
 </head>

@@ -239,6 +239,82 @@
     
     <section class="digest">
       <div class="day-header">
+        <h2>Thursday, April 9, 2026</h2>
+        <span class="story-count">6 stories</span>
+      </div>
+      <div class="signal">Meta Superintelligence Labs enters the frontier model race with Muse Spark as Claude Code v2.1.98 patches multiple critical Bash permission bypasses — including one enabling arbitrary code execution.</div>
+      <div class="bento-grid">
+        
+            <article class="card card--featured" style="--cat-glow: rgba(100,180,255,0.08);">
+              
+              <div class="card-body">
+                <span class="category-tag" style="background: rgba(100,180,255,0.12); color: #6cb4ff;">Anthropic Product</span>
+                <h3><a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.98">Claude Code v2.1.98: Monitor Tool, Vertex AI Wizard, and Critical Bash Permission Security Fixes</a></h3>
+                <p class="tldr">New Monitor tool, Vertex AI wizard, and Bash permission security patches</p>
+                <p class="summary">v2.1.98 patches multiple Bash tool permission bypasses — including one where a backslash-escaped flag could trigger arbitrary code execution — and adds a Monitor tool for streaming background script events, a Google Vertex AI interactive setup wizard, and subprocess sandboxing with Linux PID namespace isolation.</p>
+                <div class="item-meta"><span class="source">via GitHub</span></div>
+              </div>
+            </article>
+
+            <article class="card" style="--cat-glow: rgba(100,180,255,0.08);">
+              
+              <div class="card-body">
+                <span class="category-tag" style="background: rgba(100,180,255,0.12); color: #6cb4ff;">Anthropic Product</span>
+                <h3><a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.97">Claude Code v2.1.97: Focus View Toggle, Refreshable Status Line, and Live Agent Indicators</a></h3>
+                <p class="tldr">Ctrl+O focus view, refreshInterval setting, and live subagent counters land</p>
+                <p class="summary">v2.1.97 adds a Ctrl+O focus view in NO_FLICKER mode (prompt + one-line tool summary + response), a refreshInterval setting to re-run the status line command every N seconds, and a live running-instance counter (● N) in /agents — plus initial Bash permission hardening carried forward into v2.1.98.</p>
+                <div class="item-meta"><span class="source">via GitHub</span></div>
+              </div>
+            </article>
+
+            <article class="card" style="--cat-glow: rgba(100,180,255,0.08);">
+              
+              <div class="card-body">
+                <span class="category-tag" style="background: rgba(100,180,255,0.12); color: #6cb4ff;">Anthropic Product</span>
+                <h3><a href="https://code.claude.com/docs/en/commands">Claude Code Gains /autofix-pr: Cloud Agent Watches Your PR and Pushes Fixes Automatically</a></h3>
+                <p class="tldr">New /autofix-pr watches your PR and auto-pushes CI and review fixes</p>
+                <p class="summary">/autofix-pr spawns a Claude Code on the Web session that monitors your current branch's open PR, automatically pushing fixes when CI fails or reviewers leave comments. Pass a custom prompt to constrain what it fixes; requires the gh CLI and Claude Code on the Web access.</p>
+                <div class="item-meta"><span class="source">via Claude Code Docs</span></div>
+              </div>
+            </article>
+
+            <article class="card" style="--cat-glow: rgba(100,180,255,0.08);">
+              
+              <div class="card-body">
+                <span class="category-tag" style="background: rgba(100,180,255,0.12); color: #6cb4ff;">Anthropic Product</span>
+                <h3><a href="https://code.claude.com/docs/en/agent-sdk/observability.md">Agent SDK Adds OpenTelemetry Observability and Tool Search Documentation</a></h3>
+                <p class="tldr">Two new Agent SDK docs: OTel tracing and thousands-of-tools search</p>
+                <p class="summary">Two new pages appeared in the Claude Code Agent SDK docs: an OpenTelemetry observability guide for exporting traces, metrics, and events to any backend; and a Tool Search guide for dynamically discovering and routing across thousands of tools at runtime.</p>
+                <div class="item-meta"><span class="source">via Claude Code Docs</span></div>
+              </div>
+            </article>
+
+            <article class="card" style="--cat-glow: rgba(255,100,100,0.08);">
+              
+              <div class="card-body">
+                <span class="category-tag" style="background: rgba(255,100,100,0.12); color: #ff6b6b;">Competitive</span>
+                <h3><a href="https://ai.meta.com/blog/introducing-muse-spark-msl/">Meta Superintelligence Labs Ships Muse Spark: First Frontier Model from Their New Stack</a></h3>
+                <p class="tldr">Meta's first frontier model is live on meta.ai today</p>
+                <p class="summary">Muse Spark is Meta Superintelligence Labs' first model release since Llama 4, featuring native multimodal reasoning, tool use, and multi-agent orchestration. It benchmarks competitively with Opus 4.6 on some tasks but lags on agentic coding; API access is invite-only for now, with open-source promised later.</p>
+                <div class="item-meta"><span class="source">via Meta AI Blog</span></div>
+              </div>
+            </article>
+
+            <article class="card" style="--cat-glow: rgba(80,220,140,0.08);">
+              
+              <div class="card-body">
+                <span class="category-tag" style="background: rgba(80,220,140,0.12); color: #50dc8c;">Ecosystem</span>
+                <h3><a href="https://blog.langchain.com/deep-agents-deploy-an-open-alternative-to-claude-managed-agents/">LangChain Launches Deep Agents Deploy: Open-Source Alternative to Claude Managed Agents</a></h3>
+                <p class="tldr">One command ships a model-agnostic production agent with MCP and A2A</p>
+                <p class="summary">Deep Agents Deploy bundles harness orchestration, sandboxes, and 30+ endpoints (MCP, A2A, Agent Protocol, human-in-the-loop, memory) into a single `deepagents deploy` command. Explicitly positioned as a model-agnostic, open-source alternative to Anthropic Managed Agents, with no vendor lock-in on models or infrastructure.</p>
+                <div class="item-meta"><span class="source">via LangChain Blog</span></div>
+              </div>
+            </article>
+      </div>
+    </section>
+
+    <section class="digest">
+      <div class="day-header">
         <h2>Wednesday, April 8, 2026</h2>
         <span class="story-count">8 stories</span>
       </div>
@@ -699,93 +775,6 @@
                 <p class="tldr">Cursor 3 ships multi-workspace support and a cleaner agent abstraction.</p>
                 <p class="summary">Cursor released version 3, featuring a multi-workspace interface for managing agents across multiple repositories simultaneously. The update aims to raise users to a higher abstraction level above agent-produced work, with further interface changes planned as more powerful coding models become available.</p>
                 <div class="item-meta"><span class="source">via TLDR / Cursor Blog</span></div>
-              </div>
-            </article>
-      </div>
-    </section>
-
-    <section class="digest">
-      <div class="day-header">
-        <h2>Thursday, April 2, 2026</h2>
-        <span class="story-count">7 stories</span>
-      </div>
-      <div class="signal">Google Gemma 4's Apache-licensed 31B model claims the #3 open-model spot on Arena AI, setting a new bar for frontier intelligence on consumer hardware.</div>
-      <div class="bento-grid">
-        
-            <article class="card card--featured" style="--cat-glow: rgba(100,180,255,0.08);">
-              
-              <div class="card-body">
-                <span class="category-tag" style="background: rgba(100,180,255,0.12); color: #6cb4ff;">Anthropic Product</span>
-                <h3><a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.90">Claude Code v2.1.90: /powerup Interactive Lessons, Rate-Limit Crash Fix, and Performance Overhaul</a></h3>
-                <p class="tldr">New /powerup teaches features with animated demos; session crashes fixed</p>
-                <p class="summary">Claude Code v2.1.90 introduces /powerup, an interactive lesson system with animated demos for discovering features. Critical fixes: the rate-limit dialog no longer loops and crashes sessions; --resume prompt-cache miss regression (since v2.1.69) is resolved; SSE transport now handles large frames in linear rather than quadratic time.</p>
-                <div class="item-meta"><span class="source">via Claude Code Releases</span></div>
-              </div>
-            </article>
-
-            <article class="card" style="--cat-glow: rgba(100,180,255,0.08);">
-              
-              <div class="card-body">
-                <span class="category-tag" style="background: rgba(100,180,255,0.12); color: #6cb4ff;">Anthropic Product</span>
-                <h3><a href="https://www.bensbites.com/p/inside-the-leaked-claude-code-files">Leaked Claude Code Source Reveals Hidden Roadmap: Proactive Mode, /buddy Companion, and 'Penguin' Fast Mode</a></h3>
-                <p class="tldr">Source analysis exposes autonomous mode, /buddy companion, and AFK mode internals</p>
-                <p class="summary">Deep analysis of Anthropic's accidentally leaked Claude Code source reveals hidden features: 'Proactive' autonomous mode, a Tamagotchi-like /buddy companion, 'Penguin' fast mode, AFK mode, and background daemons. Anthropic has issued DMCA notices for GitHub clones; Python and Rust ports remain in a legal grey zone.</p>
-                <div class="item-meta"><span class="source">via Ben's Bites</span></div>
-              </div>
-            </article>
-
-            <article class="card" style="--cat-glow: rgba(100,180,255,0.08);">
-              
-              <div class="card-body">
-                <span class="category-tag" style="background: rgba(100,180,255,0.12); color: #6cb4ff;">Anthropic Product</span>
-                <h3><a href="https://code.claude.com/docs/en/interactive-mode">Claude Code Interactive Mode Officially Documents 'Fast Mode' — Option+O Shortcut Now Live</a></h3>
-                <p class="tldr">Option+O toggles fast mode, previously only known as internal codename 'Penguin'</p>
-                <p class="summary">Updated Claude Code interactive-mode docs add Option+O (macOS) / Alt+O (Windows/Linux) to toggle 'fast mode,' previously surfaced as internal codename 'Penguin' in the source leak. The update also adds Ctrl+T to toggle the task list and references a new /docs/en/fast-mode documentation page.</p>
-                <div class="item-meta"><span class="source">via Claude Code Docs</span></div>
-              </div>
-            </article>
-
-            <article class="card" style="--cat-glow: rgba(190,130,255,0.08);">
-              
-              <div class="card-body">
-                <span class="category-tag" style="background: rgba(190,130,255,0.12); color: #be82ff;">Anthropic Company</span>
-                <h3><a href="https://www.bloomberg.com/news/articles/2026-04-01/openai-demand-sinks-on-secondary-market-as-anthropic-runs-hot">Anthropic Investor Demand 'Runs Hot' on Secondary Market as OpenAI Shares Lose Value</a></h3>
-                <p class="tldr">$2B in capital queued for Anthropic; OpenAI secondary shares declining</p>
-                <p class="summary">Bloomberg reports OpenAI secondary market shares have dropped in value with sellers struggling to find buyers, while Anthropic is seeing $2 billion in capital ready to deploy. The divergence signals growing investor conviction in Anthropic's competitive position relative to OpenAI.</p>
-                <div class="item-meta"><span class="source">via Bloomberg</span></div>
-              </div>
-            </article>
-
-            <article class="card" style="--cat-glow: rgba(255,100,100,0.08);">
-              
-              <div class="card-body">
-                <span class="category-tag" style="background: rgba(255,100,100,0.12); color: #ff6b6b;">Competitive</span>
-                <h3><a href="https://deepmind.google/blog/gemma-4-byte-for-byte-the-most-capable-open-models/">Google Launches Gemma 4: Apache-Licensed Family Claims #3 Spot Among Open Models</a></h3>
-                <p class="tldr">31B Gemma 4 ranks #3 open model on Arena AI; four sizes, Apache 2.0</p>
-                <p class="summary">Google DeepMind releases Gemma 4 in four sizes (E2B, E4B, 26B MoE, 31B Dense) under Apache 2.0. The 31B model ranks #3 on Arena AI's open-model leaderboard; all variants feature native vision/audio input, agentic workflow support with function calling, and up to 256K context.</p>
-                <div class="item-meta"><span class="source">via Google DeepMind</span></div>
-              </div>
-            </article>
-
-            <article class="card" style="--cat-glow: rgba(255,100,100,0.08);">
-              
-              <div class="card-body">
-                <span class="category-tag" style="background: rgba(255,100,100,0.12); color: #ff6b6b;">Competitive</span>
-                <h3><a href="https://openai.com/index/codex-flexible-pricing-for-teams">OpenAI Codex Launches Flexible Pricing for Teams</a></h3>
-                <p class="tldr">Codex adds flexible team pricing tiers for multi-user coding agent deployments</p>
-                <p class="summary">OpenAI introduced flexible pricing tiers for Codex targeting team deployments, adjusting the cost structure for multi-user coding agent workflows. The update positions Codex more competitively against Claude Code for enterprise and team adoption.</p>
-                <div class="item-meta"><span class="source">via OpenAI Blog</span></div>
-              </div>
-            </article>
-
-            <article class="card" style="--cat-glow: rgba(80,220,140,0.08);">
-              
-              <div class="card-body">
-                <span class="category-tag" style="background: rgba(80,220,140,0.12); color: #50dc8c;">Ecosystem</span>
-                <h3><a href="https://x.com/arcee_ai/status/2039369121591120030">Arcee Releases Trinity-Large-Thinking: 400B Open Model, 13B Active, Ranks #2 on PinchBench</a></h3>
-                <p class="tldr">Apache 2.0 400B/13B MoE hits #2 on PinchBench behind Claude Opus 4.6</p>
-                <p class="summary">Arcee AI released Trinity-Large-Thinking under Apache 2.0, a 400B total / 13B active MoE model built for enterprise distillation and post-training. It claims #2 on PinchBench behind Claude Opus 4.6 and SOTA on Tau2-Airline; OpenRouter made it immediately available at production cost points.</p>
-                <div class="item-meta"><span class="source">via Arcee AI</span></div>
               </div>
             </article>
       </div>

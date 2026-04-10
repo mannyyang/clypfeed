@@ -239,6 +239,60 @@
     
     <section class="digest">
       <div class="day-header">
+        <h2>Friday, April 10, 2026</h2>
+        <span class="story-count">4 stories</span>
+      </div>
+      <div class="signal">Claude Code v2.1.101 ships /team-onboarding and enterprise CA cert trust, while a 6,852-session community study quantifies a 67% drop in Claude's reasoning depth since February.</div>
+      <div class="bento-grid">
+        
+            <article class="card card--featured" style="--cat-glow: rgba(255,160,50,0.08);">
+              
+              <div class="card-body">
+                <span class="category-tag" style="background: rgba(255,160,50,0.12); color: #ffb347;">Claude Updates</span>
+                <h3><a href="https://www.reddit.com/r/ClaudeCode/comments/1shaxkt/anthropic_made_claude_67_dumber_and_didnt_tell/">Developer Study: Claude Reasoning Depth Dropped 67% — 6,852 Sessions Quantify the Decline</a></h3>
+                <p class="tldr">6,852-session study quantifies 67% reasoning drop; leaked code shows two-tier instructions.</p>
+                <p class="summary">A developer's analysis of 6,852 Claude Code sessions found reasoning depth dropped 67%, with file-reading before edits falling from 6.6× to 2× and 'simplest' appearing 642% more in outputs. Leaked source also reportedly shows an internal 'ant' user flag routes Anthropic employees to a stricter instruction set — including a 'verify work actually works' check — not applied to paying users.</p>
+                <div class="item-meta"><span class="source">via r/ClaudeCode</span></div>
+              </div>
+            </article>
+
+            <article class="card" style="--cat-glow: rgba(100,180,255,0.08);">
+              
+              <div class="card-body">
+                <span class="category-tag" style="background: rgba(100,180,255,0.12); color: #6cb4ff;">Anthropic Product</span>
+                <h3><a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.101">Claude Code v2.1.101: /team-onboarding Command, Enterprise CA Trust, and Security Fixes</a></h3>
+                <p class="tldr">New /team-onboarding command; enterprise TLS proxy support added by default.</p>
+                <p class="summary">Claude Code v2.1.101 introduces /team-onboarding to auto-generate teammate ramp-up guides from local usage history, adds OS CA certificate store trust by default for enterprise TLS proxies, patches a command injection flaw in LSP binary detection, and fixes a hardcoded 5-minute request timeout that aborted slow backends and extended-thinking sessions.</p>
+                <div class="item-meta"><span class="source">via GitHub</span></div>
+              </div>
+            </article>
+
+            <article class="card" style="--cat-glow: rgba(255,100,100,0.08);">
+              
+              <div class="card-body">
+                <span class="category-tag" style="background: rgba(255,100,100,0.12); color: #ff6b6b;">Competitive</span>
+                <h3><a href="https://blog.google/innovation-and-ai/products/gemini-app/notebooks-gemini-notebooklm/">Google Gemini Gets Notebook Projects — Cross-Synced with NotebookLM</a></h3>
+                <p class="tldr">Gemini launches notebook-style projects synced with NotebookLM, matching rivals.</p>
+                <p class="summary">Google's Gemini app now offers Notebooks — project-style spaces with dedicated files, per-notebook memories, and two-way sync with NotebookLM. The feature brings Gemini to parity with Claude Projects and ChatGPT Projects for persistent, context-rich conversations.</p>
+                <div class="item-meta"><span class="source">via Ben's Bites</span></div>
+              </div>
+            </article>
+
+            <article class="card" style="--cat-glow: rgba(80,220,140,0.08);">
+              
+              <div class="card-body">
+                <span class="category-tag" style="background: rgba(80,220,140,0.12); color: #50dc8c;">Ecosystem</span>
+                <h3><a href="https://www.databricks.com/blog/memory-scaling-ai-agents">Databricks: Agent Performance Scales with Memory — Not Just Model Size or Inference Compute</a></h3>
+                <p class="tldr">Databricks research shows agents measurably improve as external memory grows.</p>
+                <p class="summary">Databricks published memory scaling research showing AI agent accuracy and efficiency improve as agents accumulate past conversations, feedback, and interaction traces — independent of model size or inference compute. The approach uses selective retrieval from episodic and semantic stores, with enterprise deployments showing the clearest gains as organizational knowledge compounds.</p>
+                <div class="item-meta"><span class="source">via Databricks</span></div>
+              </div>
+            </article>
+      </div>
+    </section>
+
+    <section class="digest">
+      <div class="day-header">
         <h2>Thursday, April 9, 2026</h2>
         <span class="story-count">6 stories</span>
       </div>
@@ -710,71 +764,6 @@
                 <p class="tldr">275 million commits per week — AI coding agents fuel historic GitHub growth.</p>
                 <p class="summary">GitHub COO Kyle Daigle reported 275 million commits per week in early April 2026, putting the platform on pace for 14 billion total this year versus 1 billion in all of 2025. GitHub Actions minutes also doubled to 2.1 billion per week, reflecting massive AI-agent-driven automation.</p>
                 <div class="item-meta"><span class="source">via Simon Willison</span></div>
-              </div>
-            </article>
-      </div>
-    </section>
-
-    <section class="digest">
-      <div class="day-header">
-        <h2>Friday, April 3, 2026</h2>
-        <span class="story-count">5 stories</span>
-      </div>
-      <div class="signal">Claude Code Desktop quietly ships cloud-managed scheduled tasks — recurring agents that run autonomously on Anthropic infrastructure even when your machine is off.</div>
-      <div class="bento-grid">
-        
-            <article class="card card--featured" style="--cat-glow: rgba(255,160,50,0.08);">
-              
-              <div class="card-body">
-                <span class="category-tag" style="background: rgba(255,160,50,0.12); color: #ffb347;">Claude Updates</span>
-                <h3><a href="https://www.reddit.com/r/ClaudeAI/comments/1sbn2vq/claude_status_update_elevated_errors_on_requests/">Claude Sonnet 4.6 Hits Partial Outage as Elevated Errors Affect Requests</a></h3>
-                <p class="tldr">Sonnet 4.6 elevated errors compound weeks of rate-limit frustration.</p>
-                <p class="summary">Anthropic's status tracker reported elevated errors on Claude Sonnet 4.6 starting around 19:21 UTC on April 3. The incident lands amid a sustained wave of user complaints about quota depletion and degraded response quality on paid plans.</p>
-                <div class="item-meta"><span class="source">via r/ClaudeAI</span></div>
-              </div>
-            </article>
-
-            <article class="card" style="--cat-glow: rgba(100,180,255,0.08);">
-              
-              <div class="card-body">
-                <span class="category-tag" style="background: rgba(100,180,255,0.12); color: #6cb4ff;">Anthropic Product</span>
-                <h3><a href="https://code.claude.com/docs/en/desktop-scheduled-tasks">Claude Code Desktop Gains Scheduled Tasks — Cloud-Run Agents Work Even When Your Machine Is Off</a></h3>
-                <p class="tldr">Claude Code Desktop now runs scheduled tasks on Anthropic cloud or locally.</p>
-                <p class="summary">New Claude Code Desktop docs reveal a Scheduled Tasks feature: recurring prompts that run on a cron-style schedule. Local tasks run on your machine (min 1-minute interval); Remote tasks run on Anthropic-managed cloud infrastructure and continue even when your computer is off (min 1-hour interval, fresh repo clone).</p>
-                <div class="item-meta"><span class="source">via Claude Code Docs</span></div>
-              </div>
-            </article>
-
-            <article class="card" style="--cat-glow: rgba(100,180,255,0.08);">
-              
-              <div class="card-body">
-                <span class="category-tag" style="background: rgba(100,180,255,0.12); color: #6cb4ff;">Anthropic Product</span>
-                <h3><a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.91">Claude Code v2.1.91: MCP Results Up to 500K, Plugin Executables via bin/, and disableSkillShellExecution Setting</a></h3>
-                <p class="tldr">v2.1.91 unlocks 500K MCP payloads, plugin executables, shell kill-switch.</p>
-                <p class="summary">Claude Code v2.1.91 introduces a new `_meta["anthropic/maxResultSizeChars"]` MCP annotation allowing tool results up to 500K characters (ideal for DB schemas), a `disableSkillShellExecution` setting to lock down shell access in skills and plugins, and support for plugins shipping their own executables under `bin/`. Also fixes `--resume` transcript chain breaks and plan-mode issues in remote containers.</p>
-                <div class="item-meta"><span class="source">via GitHub</span></div>
-              </div>
-            </article>
-
-            <article class="card" style="--cat-glow: rgba(255,100,100,0.08);">
-              
-              <div class="card-body">
-                <span class="category-tag" style="background: rgba(255,100,100,0.12); color: #ff6b6b;">Competitive</span>
-                <h3><a href="https://www.wsj.com/cmo-today/openai-buys-tech-industry-talk-show-tbpn-484c01c5">OpenAI Acquires TBPN in First-Ever Media Deal Ahead of IPO</a></h3>
-                <p class="tldr">OpenAI buys pro-tech talk show TBPN — its first media acquisition.</p>
-                <p class="summary">OpenAI has acquired TBPN, a tech talk show popular with Silicon Valley insiders averaging 70,000 viewers per episode. The show generated $5M in ad revenue in 2025 and was on track for $30M in 2026. The deal marks OpenAI's first media acquisition as it marches toward a public offering.</p>
-                <div class="item-meta"><span class="source">via WSJ</span></div>
-              </div>
-            </article>
-
-            <article class="card" style="--cat-glow: rgba(255,100,100,0.08);">
-              
-              <div class="card-body">
-                <span class="category-tag" style="background: rgba(255,100,100,0.12); color: #ff6b6b;">Competitive</span>
-                <h3><a href="https://cursor.com/blog/cursor-3">Cursor 3 Launches: Multi-Workspace Agents, Higher Abstraction Layer, and Faster Interface</a></h3>
-                <p class="tldr">Cursor 3 ships multi-workspace support and a cleaner agent abstraction.</p>
-                <p class="summary">Cursor released version 3, featuring a multi-workspace interface for managing agents across multiple repositories simultaneously. The update aims to raise users to a higher abstraction level above agent-produced work, with further interface changes planned as more powerful coding models become available.</p>
-                <div class="item-meta"><span class="source">via TLDR / Cursor Blog</span></div>
               </div>
             </article>
       </div>
